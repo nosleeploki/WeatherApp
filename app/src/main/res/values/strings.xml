@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="username">Username</string>
+    <string name="fullName">Full name</string>
+    <string name="numberPhone">Phone number</string>
+    <string name="passWord">Password</string>
+    <string name="signup">Sign up</string>
+    <string name="signin">Sign in</string>
+    <string name="signed">You already have an account? Sign in</string>
+    <string name="policy_setting">I agree with privacy and policy</string>
+    <string name="signuplabel">Lets join with us!</string>
+    <string name="H1label1">Welcome</string>
+    <string name="H1label2">Back</string>
+    <string name="greetinglabel">Hey, Good to see you again!</string>
+    <string name="checkBox">Remember me</string>
+    <string name="dont_have_account">Dont have an account? Sign up</string>
+
+</resources>
