@@ -1,5 +1,6 @@
 package com.example.login.presentation.ui.login
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -12,10 +13,12 @@ import com.example.login.data.repository.UserRepository
 import com.example.login.databinding.WaLoginActivityBinding
 import com.example.login.presentation.di.ViewModelFactory
 import com.example.login.presentation.ui.register.RegisterActivity
+import com.example.login.presentation.ui.weather.WeatherActivity
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var viewModel: LoginViewModel
     private lateinit var binding: WaLoginActivityBinding
+    private lateinit var dbHelper: DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
@@ -52,7 +55,20 @@ class LoginActivity : AppCompatActivity() {
                 viewModel.navigateToRegisterEvent.value = false // Reset sự kiện
             }
         }
+    }
+
+    private fun loginUser(username: String, password: String){
+        val sharedPreferences = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        val userId = sharedPreferences.getInt("user_id", -1)
 
 
+        if (userId != -1){
+            val dbHelper = DatabaseHelper(this)
+            val favoriteLocations = dbHelper.getFavoriteLocations(userId)
+        }
+
+        val intent = Intent(this, WeatherActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
