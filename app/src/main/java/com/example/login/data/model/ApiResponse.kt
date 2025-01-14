@@ -1,5 +1,7 @@
 package com.example.login.data.model
 
+import com.google.gson.annotations.SerializedName
+
 data class WeatherResponse (
     val coord: Coord,
     val weather: List<Weather>,

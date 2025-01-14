@@ -3,301 +3,217 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+        <!-- Thêm biến viewModel và liên kết với lớp ViewModel -->
         <variable
             name="viewModel"
-            type="com.example.login.presentation.ui.weather.WeatherViewModel" />
+            type="com.example.login.presentation.ui.weather.ForecastWeatherViewModel" />
     </data>
-<androidx.drawerlayout.widget.DrawerLayout
-    android:id="@+id/drawerLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg">
 
-    <!-- Nội dung chính của Activity -->
-    <RelativeLayout
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/bg">
 
-        <!-- Toolbar và EditText tìm kiếm -->
-
-        <LinearLayout
-            android:id="@+id/toolbar"
+        <!-- Nội dung chính của Activity -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="#99bad8"
-
-            android:padding="16dp">
-
-            <EditText
-                android:id="@+id/etSearchLocation"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:hint="🔎 Search location"
-                android:padding="8dp" />
-
-            <ImageView
-                android:id="@+id/ivMenu"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="8dp"
-                android:contentDescription="Menu"
-                android:foreground="@drawable/more" />
-        </LinearLayout>
-
-        <!-- CardView hiển thị thông tin thời tiết hiện tại -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/currentWeatherCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/toolbar"
-            android:layout_marginTop="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp"
-            >
+            android:layout_height="match_parent">
 
             <LinearLayout
-                android:id="@+id/weatherlo"
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="40dp"
-                >
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#99bad8"
+                android:padding="16dp">
 
-
-                <TextView
-                    android:id="@+id/tvCity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="◌"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:shadowColor="#000000"
-                    android:shadowRadius="7"
-                    android:shadowDx="0"
-                    android:shadowDy="0"/>
-
-
-                <ImageView
-                    android:id="@+id/weatherIcon"
-                    android:layout_width="84dp"
-                    android:layout_height="84dp"
-                    android:layout_marginTop="5dp"
-                    app:srcCompat="@drawable/loadingpicture"
-
-                    />
-
-                <LinearLayout
+                <EditText
+                    android:id="@+id/etSearchLocation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="25dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:autofillHints=""
+                    android:hint="@string/searchButton"
+                    android:inputType="text"
+                    android:padding="8dp" />
+
+                <ImageView
+                    android:id="@+id/ivMenu"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="@string/menu"
+                    android:foreground="@drawable/more" />
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/currentWeatherCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/toolbar"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:id="@+id/weather"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="40dp">
 
                     <TextView
-                        android:id="@+id/tvTemperature"
+                        android:id="@+id/tvCity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="◌"
+                        android:layout_gravity="center"
+                        android:text="@{viewModel.forecastData.city.name}"
                         android:textSize="24sp"
                         android:textStyle="bold"
                         android:textColor="#FFFFFF"
                         android:shadowColor="#000000"
-                        android:shadowRadius="5"
+                        android:shadowRadius="7"
                         android:shadowDx="0"
                         android:shadowDy="0" />
 
+                    <ImageView
+                        android:id="@+id/weatherIcon"
+                        android:layout_width="84dp"
+                        android:layout_height="84dp"
+                        android:layout_marginTop="5dp"
+                        android:contentDescription="@string/icon"
+                        app:srcCompat="@drawable/loading" />
 
-
-                    <TextView
-                        android:id="@+id/tvHumidity"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="💧: ◌"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"
-                        android:shadowColor="#000000"
-                        android:shadowRadius="5"
-                        android:shadowDx="0"
-                        android:shadowDy="0"/>
+                        android:layout_marginVertical="25dp"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tvWeatherDescription"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/tvTemperature"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{viewModel.forecastData.list[0].main.temp}"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:textColor="#FFFFFF"
+                            android:shadowColor="#000000"
+                            android:shadowRadius="5"
+                            android:shadowDx="0"
+                            android:shadowDy="0" />
+
+                        <TextView
+                            android:id="@+id/tvHumidity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{viewModel.forecastData.list[0].main.humidity}"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#FFFFFF"
+                            android:shadowColor="#000000"
+                            android:shadowRadius="5"
+                            android:shadowDx="0"
+                            android:shadowDy="0" />
+
+                        <TextView
+                            android:id="@+id/tvWeatherDescription"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{viewModel.forecastData.list[0].weather[0].description}"
+                            android:textSize="16sp"
+                            android:textColor="#FFFFFF"
+                            android:shadowColor="#000000"
+                            android:shadowRadius="5"
+                            android:shadowDx="0"
+                            android:shadowDy="0" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="◌"
-                        android:textSize="16sp"
-                        android:textColor="#FFFFFF"
-                        android:shadowColor="#000000"
-                        android:shadowRadius="5"
-                        android:shadowDx="0"
-                        android:shadowDy="0"/>
+                        android:layout_marginVertical="5dp"
+                        android:gravity="start"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/ivFavorite"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="start"
+                            android:contentDescription="@string/icon"
+                            app:srcCompat="@drawable/star" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <ImageView
+                            android:id="@+id/icRecent"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="start"
+                            android:contentDescription="@string/icon"
+                            app:srcCompat="@drawable/ic_recent_highlight"
+                            android:elevation="250dp" />
+                    </LinearLayout>
                 </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
+            <HorizontalScrollView
+                android:id="@+id/hourlyForecastLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/currentWeatherCard"
+                android:layout_marginTop="20dp"
+                android:background="#b5dbff"
+                android:scrollbars="none">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/hourlyForecastLayoutLayout"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="5dp"
-                    android:gravity="start"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_margin="8dp">
 
-                    <ImageView
-                        android:id="@+id/ivFavorite"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="start"
-                        app:srcCompat="@drawable/star"
-
-                        />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
-
-                    <ImageView
-                        android:id="@+id/icRecent"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="start"
-                        app:srcCompat="@drawable/ic_recent_highlight"
-                        android:elevation="250dp"
-                        />
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/viewPagerForecast"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal" />
                 </LinearLayout>
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Dự báo thời tiết từng giờ -->
-        <HorizontalScrollView
-            android:id="@+id/hourlyForecastLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/currentWeatherCard"
-            android:layout_marginTop="20dp"
-            android:background="#b5dbff"
-            android:scrollbars="none"
-            >
+            </HorizontalScrollView>
 
             <LinearLayout
-                android:id="@+id/hourlyForecastLayoutLayout"
-                android:layout_width="wrap_content"
+                android:id="@+id/dailyForecastLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="8dp"
-                >
+                android:layout_below="@id/hourlyForecastLayout"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:orientation="vertical">
 
-
-                <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/viewPagerForecast"
+                <TextView
+                    android:id="@+id/dailyTemp1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal" />
-
-                <!-- Tiếp tục thêm cho các giờ khác -->
+                    android:text="@string/load"
+                    android:textAlignment="center"
+                    android:textSize="20sp"
+                    android:padding="6dp"
+                    android:background="#b5dbff"
+                    android:shadowColor="#000000"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="4" />
             </LinearLayout>
-        </HorizontalScrollView>
-
-        <!-- Dự báo thời tiết từng ngày -->
-        <LinearLayout
-            android:id="@+id/dailyForecastLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/hourlyForecastLayout"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/dailyTemp1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="◌"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                android:padding="6dp"
-                android:background="#b5dbff"
-                android:shadowColor="#000000"
-                android:shadowDx="2"
-                android:shadowDy="2"
-                android:shadowRadius="4"
-                />
-
-
-            <TextView
-                android:layout_marginTop="2sp"
-                android:id="@+id/dailyTemp2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="◌"
-                android:textAlignment="center"
-
-                android:textSize="20sp"
-                android:padding="6dp"
-                android:background="#b5dbff"
-                android:shadowColor="#000000"
-                android:shadowDx="2"
-                android:shadowDy="2"
-                android:shadowRadius="4"
-                />
-
-            <TextView
-                android:id="@+id/dailyTemp3"
-                android:layout_marginTop="2sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:text="◌"
-                android:textSize="20sp"
-                android:padding="6dp"
-                android:background="#b5dbff"
-                android:shadowColor="#000000"
-                android:shadowDx="2"
-                android:shadowDy="2"
-                android:shadowRadius="4"
-                />
-            <TextView
-                android:id="@+id/dailyTemp4"
-                android:layout_marginTop="2sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="◌"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                android:padding="6dp"
-                android:background="#b5dbff"
-                android:shadowColor="#000000"
-                android:shadowDx="2"
-                android:shadowDy="2"
-                android:shadowRadius="4"
-                />
-            <TextView
-                android:layout_marginTop="2sp"
-                android:id="@+id/dailyTemp5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="◌"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                android:padding="6dp"
-                android:background="#b5dbff"
-                android:shadowColor="#000000"
-                android:shadowDx="2"
-                android:shadowDy="2"
-                android:shadowRadius="4"
-                />
-
-            <!-- Thêm các TextView khác cho các ngày tiếp theo -->
-        </LinearLayout>
-    </RelativeLayout>
-</androidx.drawerlayout.widget.DrawerLayout>
+        </RelativeLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

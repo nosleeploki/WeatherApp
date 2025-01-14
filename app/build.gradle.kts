@@ -17,6 +17,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        buildConfigField("String", "API_KEY", "\"79f8f1afc528c17f6e0122251d47c3ce\"")
     }
     packagingOptions {
         exclude ("META-INF/LICENSE.md") // Loại bỏ tệp LICENSE.md
@@ -60,6 +61,7 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.androidx.databinding.runtime)
     implementation(libs.androidx.databinding.compiler.common)
+    implementation(libs.firebase.crashlytics.buildtools)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,7 +78,6 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
 
     //Kotlin flow
-    implementation ("org.jetbrains.kotlinx:kotlinx-flow:1.6.0")
 
     //ViewModelScope
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
@@ -91,5 +92,4 @@ dependencies {
     //Koin
     implementation("io.insert-koin:koin-android:3.3.0")
     implementation("io.insert-koin:koin-core:3.3.0")
-    implementation("io.insert-koin:koin-androidx-viewmodel:3.3.0")
 }

@@ -33,9 +33,8 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
         if (user != null) {
             loginStatus.value = true
             errorMessage.value = "Login successful"
-            // Handle the isCheckValue for "Remember Me" functionality if needed
             if (isCheckValue) {
-                // Save user info or token for future sessions
+
             }
         } else {
             loginStatus.value = false
