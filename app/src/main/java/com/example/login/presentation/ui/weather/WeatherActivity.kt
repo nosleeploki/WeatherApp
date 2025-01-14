@@ -3,6 +3,7 @@ package com.example.login.presentation.ui.weather
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -50,15 +51,17 @@ class WeatherActivity : AppCompatActivity() {
     private fun updateUI(forecastResponse: ForecastResponse) {
         val city = forecastResponse.city.name
         val currentWeather = forecastResponse.list.firstOrNull()
-        val temperature = currentWeather?.main?.temp ?: "--"
-        val humidity = currentWeather?.main?.humidity?.toFloat() ?: "--"
+        val temperature = currentWeather?.main?.temp?.toString() ?: "--"
+        val humidity = currentWeather?.main?.humidity?.toFloat()?.toString() ?: "--"
         val description = currentWeather?.weather?.firstOrNull()?.description ?: getString(R.string.unknown)
-        binding.tvTemperature.text = getString(R.string.temperature_format, temperature)
-        binding.tvHumidity.text = getString(R.string.humidity_format, humidity)
+        Log.d("WeatherActivity", "Description: ${getString(R.string.unknown)}")
+
+
         val weatherIcon = currentWeather?.weather?.firstOrNull()?.icon ?: "01d"
 
+        binding.tvTemperature.text = temperature
+        binding.tvHumidity.text = humidity
         binding.tvCity.text = city
-
         binding.tvWeatherDescription.text = description
 
         val iconUrl = "https://openweathermap.org/img/wn/$weatherIcon@2x.png"
