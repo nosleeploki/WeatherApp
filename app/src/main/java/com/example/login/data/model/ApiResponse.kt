@@ -1,17 +1,18 @@
 package com.example.login.data.model
 
-import com.google.gson.annotations.SerializedName
-
 data class WeatherResponse (
     val coord: Coord,
     val weather: List<Weather>,
     val main: Main,
-    val name: String
+    val name: String,
+    val city: City
 )
 
 data class ForecastResponse(
     val city: City,
-    val list: List<ForecastItem>
+    val list: List<ForecastItem>,
+    val dailyItem: List<DailyForecast>? = null,
+    val hourlyItem: List<HourlyForecast>? = null
 )
 
 data class City(
@@ -29,7 +30,7 @@ data class ForecastItem(
     val dt: Long,
     val main: Main,
     val weather: List<Weather>,
-    val wind: Wind
+    val dt_txt: String
 )
 
 data class Main(
@@ -42,6 +43,17 @@ data class Weather(
     val icon: String
 )
 
-data class Wind(
-    val speed: Double
+data class DailyForecast(
+    val date: String,
+    val temperature: String,
+    val description: String,
+    val iconUrl: String
 )
+
+data class HourlyForecast(
+    val time: String,
+    val temperature: String,
+    val iconUrl: String
+)
+
+

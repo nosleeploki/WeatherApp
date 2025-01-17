@@ -1,47 +1,59 @@
 package com.example.login.presentation.ui.weather
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.login.data.repository.WeatherRepository
 import androidx.lifecycle.viewModelScope
 import com.example.login.data.model.ForecastResponse
 import com.example.login.data.model.WeatherResponse
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
+import com.example.login.data.network.RetrofitBuilder
+import com.example.login.data.repository.WeatherRepository
+import com.example.login.presentation.utils.Constants
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class WeatherViewModel (private val repository: WeatherRepository): ViewModel() {
+class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() {
+    val forecastData = MutableLiveData<ForecastResponse>()
+    val weatherData = MutableLiveData<WeatherResponse>()
+    val errorMessage = MutableLiveData<String>()
 
-    private val _weatherData = MutableStateFlow<WeatherResponse?>(null)
-    val weatherData: StateFlow<WeatherResponse?> get() = _weatherData
-
-    private val _forecastData = MutableStateFlow<ForecastResponse?>(null)
-    val forecastData: StateFlow<ForecastResponse?> get() = _forecastData
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> get() = _error
-
-    fun fetchWeather(city: String) {
+    fun fetchWeather(city: String, apiKey: String = Constants.API_KEY) {
         viewModelScope.launch {
-            repository.fetchWeather(city)
-                .catch { e ->
-                    _error.value = e.message
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitBuilder.api.getWeather(city, apiKey)
                 }
-                .collect { response ->
-                    _weatherData.value = response
+                if (response.isSuccessful) {
+                    val weatherResponse = response.body()
+                    val lat = weatherResponse?.coord?.lat ?: 0.0
+                    val lon = weatherResponse?.coord?.lon ?: 0.0
+
+                    fetchWeatherForecast(lat, lon)
+                } else {
+                    errorMessage.postValue("Lỗi: ${response.message()}")
                 }
+            } catch (e: Exception) {
+                errorMessage.postValue("Lỗi kết nối: ${e.message}")
+            }
         }
     }
 
-    fun fetchWeatherForecast(latitude: Double, longitude: Double) {
+    fun fetchWeatherForecast(lat: Double, lon: Double, apiKey: String = Constants.API_KEY) {
         viewModelScope.launch {
-            repository.fetchWeatherForecast(latitude, longitude)
-                .catch { e ->
-                    _error.value = e.message
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitBuilder.api.getWeatherForecast(lat, lon, apiKey)
                 }
-                .collect { response ->
-                    _forecastData.value = response
+                if (response.isSuccessful) {
+                    forecastData.postValue(response.body())
+                } else {
+                    errorMessage.postValue("Lỗi: ${response.message()}")
                 }
+            } catch (e: Exception) {
+                errorMessage.postValue("Lỗi kết nối: ${e.message}")
+            }
         }
     }
 }

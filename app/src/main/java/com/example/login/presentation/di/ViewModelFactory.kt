@@ -6,7 +6,7 @@ import com.example.login.data.repository.UserRepository
 import com.example.login.data.repository.WeatherRepository
 import com.example.login.presentation.ui.login.LoginViewModel
 import com.example.login.presentation.ui.register.RegisterViewModel
-import com.example.login.presentation.ui.weather.WeatherViewModel
+import com.example.login.presentation.ui.weather.ForecastWeatherViewModel
 
 class ViewModelFactory(
     private val userRepository: UserRepository

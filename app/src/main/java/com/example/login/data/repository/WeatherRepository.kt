@@ -39,7 +39,6 @@
                 }
             )
         }
-
         private inline fun <T> handleApiCall(apiCall: () -> T): T {
             try {
                 return apiCall()

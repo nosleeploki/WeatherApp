@@ -2,7 +2,6 @@ package com.example.login.data.network
 
 import com.example.login.data.model.ForecastResponse
 import com.example.login.data.model.WeatherResponse
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
