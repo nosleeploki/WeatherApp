@@ -18,6 +18,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "API_KEY", "\"79f8f1afc528c17f6e0122251d47c3ce\"")
+        buildConfigField("String", "API_BASE_URL", "\"https://api.openweathermap.org/data/2.5/\"")
+
     }
     packagingOptions {
         exclude ("META-INF/LICENSE.md") // Loại bỏ tệp LICENSE.md
@@ -90,6 +92,6 @@ dependencies {
     implementation ("com.google.android.gms:play-services-location:18.0.0")
 
     //Koin
-    implementation("io.insert-koin:koin-android:3.3.0")
-    implementation("io.insert-koin:koin-core:3.3.0")
+    implementation("io.insert-koin:koin-android:3.1.4")
+    implementation("io.insert-koin:koin-core:3.1.4")
 }

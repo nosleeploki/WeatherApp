@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.login.R
+import com.example.login.data.cache.AuthCache
 import com.example.login.data.local.DatabaseHelper
 import com.example.login.data.repository.UserRepository
 import com.example.login.databinding.WaRegisterActivityBinding
@@ -17,15 +18,18 @@ class RegisterActivity : AppCompatActivity() {
 
     private lateinit var viewModel: RegisterViewModel
     private lateinit var binding: WaRegisterActivityBinding
+    private lateinit var authCache: AuthCache
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.wa_register_activity)
 
         val dbHelper = DatabaseHelper(this)
-        val userRepository = UserRepository(dbHelper)
+        authCache = AuthCache(this, dbHelper)
 
-        val factory = ViewModelFactory(userRepository)
+        val userRepository = UserRepository(dbHelper, authCache)
+
+        val factory = ViewModelFactory(userRepository, authCache)
         viewModel = ViewModelProvider(this, factory).get(RegisterViewModel::class.java)
 
         binding.viewModel = viewModel
@@ -44,6 +48,7 @@ class RegisterActivity : AppCompatActivity() {
                     Toast.makeText(this, "Registration successfull", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this, LoginActivity::class.java))
                     viewModel.navigateToLoginEvent.value = false
+                    finish()
                 }
         }
 

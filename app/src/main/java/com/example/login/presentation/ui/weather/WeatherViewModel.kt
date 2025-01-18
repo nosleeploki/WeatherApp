@@ -1,59 +1,45 @@
 package com.example.login.presentation.ui.weather
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.login.data.model.ForecastResponse
-import com.example.login.data.model.WeatherResponse
-import com.example.login.data.network.RetrofitBuilder
+import com.example.login.BuildConfig
+import com.example.login.data.model.ForecastUiModel
+import com.example.login.data.model.WeatherUiModel
 import com.example.login.data.repository.WeatherRepository
-import com.example.login.presentation.utils.Constants
-import kotlinx.coroutines.Dispatchers
+import com.example.login.presentation.model.ForecastUiModelMapper
+import com.example.login.presentation.model.WeatherUiModelMapper
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() {
-    val forecastData = MutableLiveData<ForecastResponse>()
-    val weatherData = MutableLiveData<WeatherResponse>()
+class WeatherViewModel(
+    private val repository: WeatherRepository,
+    private val weatherUiModelMapper: WeatherUiModelMapper,
+    private val forecastUiModelMapper: ForecastUiModelMapper
+
+    ) : ViewModel() {
+    private val _weatherLiveData = MutableLiveData<WeatherUiModel>()
+    val weatherLiveData: LiveData<WeatherUiModel> get() = _weatherLiveData
+
+    private val _forecastLiveData = MutableLiveData<ForecastUiModel>()
+    val forecastLiveData: LiveData<ForecastUiModel> get() = _forecastLiveData
+
     val errorMessage = MutableLiveData<String>()
 
-    fun fetchWeather(city: String, apiKey: String = Constants.API_KEY) {
+    fun fetchWeather(city: String, apiKey:String = BuildConfig.API_KEY) {
         viewModelScope.launch {
-            try {
-                val response = withContext(Dispatchers.IO) {
-                    RetrofitBuilder.api.getWeather(city, apiKey)
+                repository.fetchWeather(city)
+                    .map { weatherUiModelMapper.mapToUiModel(it) }
+                    .collect { _weatherLiveData.postValue(it)}
                 }
-                if (response.isSuccessful) {
-                    val weatherResponse = response.body()
-                    val lat = weatherResponse?.coord?.lat ?: 0.0
-                    val lon = weatherResponse?.coord?.lon ?: 0.0
-
-                    fetchWeatherForecast(lat, lon)
-                } else {
-                    errorMessage.postValue("Lỗi: ${response.message()}")
-                }
-            } catch (e: Exception) {
-                errorMessage.postValue("Lỗi kết nối: ${e.message}")
-            }
         }
-    }
 
-    fun fetchWeatherForecast(lat: Double, lon: Double, apiKey: String = Constants.API_KEY) {
+    fun fetchWeatherForecast(lat: Double, lon: Double) {
         viewModelScope.launch {
-            try {
-                val response = withContext(Dispatchers.IO) {
-                    RetrofitBuilder.api.getWeatherForecast(lat, lon, apiKey)
-                }
-                if (response.isSuccessful) {
-                    forecastData.postValue(response.body())
-                } else {
-                    errorMessage.postValue("Lỗi: ${response.message()}")
-                }
-            } catch (e: Exception) {
-                errorMessage.postValue("Lỗi kết nối: ${e.message}")
-            }
+            repository.fetchWeatherForecast(lat, lon)
+                .map { forecastUiModelMapper.mapToUiModel(it) }
+                .collect {_forecastLiveData.postValue(it)}
         }
     }
 }

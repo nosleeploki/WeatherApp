@@ -1,7 +1,7 @@
 package com.example.login.data.network
 
-import com.example.login.data.model.ForecastResponse
-import com.example.login.data.model.WeatherResponse
+import com.example.login.data.model.ForecastEntity
+import com.example.login.data.model.WeatherEntity
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -12,7 +12,7 @@ interface  WeatherApi {
         @Query("q") city:String,
         @Query("appid") apiKey:String,
         @Query("units") units: String = "metric"
-    ): Response<WeatherResponse>
+    ): Response<WeatherEntity>
 
     @GET("forecast")
     suspend fun getWeatherForecast(
@@ -20,5 +20,5 @@ interface  WeatherApi {
         @Query("lon") longtitiude:Double,
         @Query("appid") apiKey: String,
         @Query("units") units: String = "metric"
-    ): Response<ForecastResponse>
+    ): Response<ForecastEntity>
 }

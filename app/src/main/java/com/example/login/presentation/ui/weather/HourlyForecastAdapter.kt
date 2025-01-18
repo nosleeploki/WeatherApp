@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.login.R
-import com.example.login.data.model.HourlyForecast
+import com.example.login.data.model.HourlyForecastUiModel
 import com.example.login.databinding.WaItemHourlyBinding
 
 class HourlyForecastAdapter :
-    ListAdapter<HourlyForecast, HourlyForecastAdapter.HourlyViewHolder>(HourlyForecastDiffCallback()) {
+    ListAdapter<HourlyForecastUiModel, HourlyForecastAdapter.HourlyViewHolder>(HourlyForecastDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourlyViewHolder {
         val binding = DataBindingUtil.inflate<WaItemHourlyBinding>(
@@ -33,7 +33,7 @@ class HourlyForecastAdapter :
 
     inner class HourlyViewHolder(private val binding: WaItemHourlyBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(hourlyForecast: HourlyForecast) {
+        fun bind(hourlyForecast: HourlyForecastUiModel) {
             binding.tvTime.text = hourlyForecast.time
             binding.tvTemp.text = hourlyForecast.temperature
             Glide.with(binding.root.context)
@@ -45,12 +45,12 @@ class HourlyForecastAdapter :
         }
     }
 
-    class HourlyForecastDiffCallback : DiffUtil.ItemCallback<HourlyForecast>() {
-        override fun areItemsTheSame(oldItem: HourlyForecast, newItem: HourlyForecast): Boolean {
+    class HourlyForecastDiffCallback : DiffUtil.ItemCallback<HourlyForecastUiModel>() {
+        override fun areItemsTheSame(oldItem: HourlyForecastUiModel, newItem: HourlyForecastUiModel): Boolean {
             return oldItem.time == newItem.time
         }
 
-        override fun areContentsTheSame(oldItem: HourlyForecast, newItem: HourlyForecast): Boolean {
+        override fun areContentsTheSame(oldItem: HourlyForecastUiModel, newItem: HourlyForecastUiModel): Boolean {
             return oldItem == newItem
         }
     }

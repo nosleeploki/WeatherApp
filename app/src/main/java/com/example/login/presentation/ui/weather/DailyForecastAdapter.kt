@@ -8,11 +8,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.login.R
-import com.example.login.data.model.DailyForecast
+import com.example.login.data.model.DailyForecastUiModel
 import com.example.login.databinding.WaItemDailyBinding
 
 class DailyForecastAdapter :
-    ListAdapter<DailyForecast, DailyForecastAdapter.DailyViewHolder>(DailyForecastDiffCallback()) {
+    ListAdapter<DailyForecastUiModel, DailyForecastAdapter.DailyViewHolder>(DailyForecastDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DailyViewHolder {
         val binding = DataBindingUtil.inflate<WaItemDailyBinding>(
@@ -29,9 +29,10 @@ class DailyForecastAdapter :
         holder.bind(item)
     }
 
+
     inner class DailyViewHolder(private val binding: WaItemDailyBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(dailyForecast: DailyForecast) {
+        fun bind(dailyForecast: DailyForecastUiModel) {
             binding.tvDate.text = dailyForecast.date
             binding.tvDailyTemp.text = dailyForecast.temperature
             Glide.with(binding.root.context)
@@ -42,12 +43,12 @@ class DailyForecastAdapter :
         }
     }
 
-    class DailyForecastDiffCallback : DiffUtil.ItemCallback<DailyForecast>() {
-        override fun areItemsTheSame(oldItem: DailyForecast, newItem: DailyForecast): Boolean {
+    class DailyForecastDiffCallback : DiffUtil.ItemCallback<DailyForecastUiModel>() {
+        override fun areItemsTheSame(oldItem: DailyForecastUiModel, newItem: DailyForecastUiModel): Boolean {
             return oldItem.date == newItem.date
         }
 
-        override fun areContentsTheSame(oldItem: DailyForecast, newItem: DailyForecast): Boolean {
+        override fun areContentsTheSame(oldItem: DailyForecastUiModel, newItem: DailyForecastUiModel): Boolean {
             return oldItem == newItem
         }
     }

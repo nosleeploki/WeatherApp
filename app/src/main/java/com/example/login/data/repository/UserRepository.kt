@@ -1,9 +1,12 @@
 package com.example.login.data.repository
 
+import com.example.login.data.cache.AuthCache
 import com.example.login.data.local.DatabaseHelper
 import com.example.login.data.model.User
 
-class UserRepository(private val dbHelper: DatabaseHelper) {
+class UserRepository(
+    private val dbHelper: DatabaseHelper,
+    private val authCache: AuthCache) {
     //Add
     fun registerUser(name: String, username: String, phone: String, password: String) : Boolean{
         if (dbHelper.isValid(username, phone)){
@@ -12,9 +15,13 @@ class UserRepository(private val dbHelper: DatabaseHelper) {
         return dbHelper.insertUser(name, username, phone, password)
     }
 
-    //Check isValid
+    //dang nhap va luu vao cache
     fun loginUser(username: String, password: String): User? {
-        return dbHelper.getUser(username, password)
+        val user = dbHelper.getUser(username, password)
+        user?.let {
+            authCache.saveUserProfile(it)
+        }
+        return user
     }
 
     //Kiểm tra tính hợp lệ của username và số điện thoại

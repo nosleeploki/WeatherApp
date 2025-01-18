@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.login.presentation.ui.weather.ForecastWeatherViewModel" />
+            type="com.example.login.presentation.ui.weather.WeatherViewModel" />
     </data>
 
     <androidx.drawerlayout.widget.DrawerLayout
@@ -77,7 +77,7 @@
                     android:shadowDx="0"
                     android:shadowDy="0"
                     android:shadowRadius="7"
-                    android:text="@{viewModel.forecastData.city.name}"
+                    android:text="@{viewModel.weatherLiveData.cityName}"
                     android:textColor="#FFFFFF"
                     android:textSize="24sp"
                     android:textStyle="bold"
@@ -109,7 +109,7 @@
                     android:shadowDx="0"
                     android:shadowDy="0"
                     android:shadowRadius="5"
-                    android:text='@{String.format("%s%%", viewModel.forecastData.list[0].main.temp)}'
+                    android:text="@{viewModel.weatherLiveData.temperatureDisplay}"
                     android:textColor="#FFFFFF"
                     android:textSize="24sp"
                     android:textStyle="bold"
@@ -125,7 +125,7 @@
                     android:shadowDx="0"
                     android:shadowDy="0"
                     android:shadowRadius="5"
-                    android:text='@{String.format("%s%%", viewModel.forecastData.list[0].main.humidity)}'
+                    android:text="@{viewModel.weatherLiveData.humidityDisplay}"
                     android:textColor="#FFFFFF"
                     android:textSize="12sp"
                     android:textStyle="bold"
@@ -141,7 +141,7 @@
                     android:shadowDx="0"
                     android:shadowDy="0"
                     android:shadowRadius="5"
-                    android:text="@{viewModel.forecastData.list[0].weather[0].description}"
+                    android:text="@{viewModel.weatherLiveData.description}"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
