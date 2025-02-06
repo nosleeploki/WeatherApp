@@ -16,8 +16,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField("String", "API_KEY", "\"79f8f1afc528c17f6e0122251d47c3ce\"")
     }
     packagingOptions {
         exclude ("META-INF/LICENSE.md") // Loại bỏ tệp LICENSE.md
@@ -47,7 +45,6 @@ android {
     }
     buildFeatures{
         dataBinding = true
-        buildConfig = true
     }
 }
 
@@ -61,35 +58,7 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.androidx.databinding.runtime)
     implementation(libs.androidx.databinding.compiler.common)
-    implementation(libs.firebase.crashlytics.buildtools)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    //Retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
-    //Lấy vị trí hiện tại của người dùng
-    implementation ("com.google.android.gms:play-services-location:19.0.1")
-
-    //Coroutine
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
-
-    //Kotlin flow
-
-    //ViewModelScope
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-
-    // Glide để tải ảnh thời tiết
-    implementation("com.github.bumptech.glide:glide:4.15.1")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
-
-    //Googleplay Service
-    implementation ("com.google.android.gms:play-services-location:18.0.0")
-
-    //Koin
-    implementation("io.insert-koin:koin-android:3.3.0")
-    implementation("io.insert-koin:koin-core:3.3.0")
 }
