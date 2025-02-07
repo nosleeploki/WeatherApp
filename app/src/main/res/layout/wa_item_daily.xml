@@ -5,7 +5,19 @@
             name="dailyWeather"
             type="com.example.login.data.model.ForecastItem" />
     </data>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:padding="8dp">
+        <View
+            android:id="@+id/separatorView"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#8A99A2"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +33,7 @@
             android:layout_weight="1"
             android:text="@{dailyWeather.dateTime.substring(0,10)}"
             android:textColor="#000000"
-            android:textSize="16sp"
+            android:textSize="21sp"
             android:gravity="start" />
 
         <!-- Icon thời tiết -->
@@ -30,7 +42,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:contentDescription="@string/icon"
-            app:imageUrl='@{"https://openweathermap.org/img/wn/" + dailyWeather.weather.get(0).icon + "@2x.png"}' />
+            app:imageUrl='@{"http://openweathermap.org/img/wn/" + dailyWeather.weather.get(0).icon + "@2x.png"}' />
 
         <!-- Nhiệt độ -->
         <TextView
@@ -40,7 +52,9 @@
             android:layout_weight="1"
             android:text='@{String.format("%.1f°C", dailyWeather.main.temperature)}'
             android:textColor="#000000"
-            android:textSize="16sp"
+            android:textSize="21sp"
             android:gravity="end" />
+
+    </LinearLayout>
     </LinearLayout>
 </layout>

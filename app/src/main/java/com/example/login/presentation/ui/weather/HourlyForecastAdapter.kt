@@ -1,42 +1,55 @@
-package com.example.login.presentation.ui.weather
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.login.R
+import com.example.login.databinding.WaItemHourlyBinding
 import com.example.login.data.model.ForecastItem
+import java.text.SimpleDateFormat
+import java.util.*
 
-class HourlyForecastAdapter(private val hourlyForecastList: List<ForecastItem>) :
+class HourlyForecastAdapter(forecastList: List<ForecastItem>) :
     RecyclerView.Adapter<HourlyForecastAdapter.HourlyForecastViewHolder>() {
 
-    inner class HourlyForecastViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvTime: TextView = itemView.findViewById(R.id.tvTime)
-        val ivWeatherIcon: ImageView = itemView.findViewById(R.id.ivWeatherIcon)
-        val tvTemp: TextView = itemView.findViewById(R.id.tvTemp)
+    private val hourlyList: List<ForecastItem>
+
+    init {
+        hourlyList = filterNext8Hours(forecastList)
     }
 
+    inner class HourlyForecastViewHolder(val binding: WaItemHourlyBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourlyForecastViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.wa_item_hourly, parent, false)
-        return HourlyForecastViewHolder(view)
+        val binding: WaItemHourlyBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            R.layout.wa_item_hourly,
+            parent,
+            false
+        )
+        return HourlyForecastViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: HourlyForecastViewHolder, position: Int) {
-        val item = hourlyForecastList[position]
-
-        holder.tvTime.text = item.dateTime.split(" ")[1]
-        holder.tvTemp.text = "${item.main.temperature}°C"
-        val iconUrl = "https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png"
-        Glide
-            .with(holder.itemView.context)
-            .load(iconUrl)
-            .into(holder.ivWeatherIcon)
+        holder.binding.hourlyWeather = hourlyList[position]
+        holder.binding.executePendingBindings()
+        if (position == hourlyList.size - 1) {
+            holder.binding.separatorView.visibility = View.GONE
+        } else {
+            holder.binding.separatorView.visibility = View.VISIBLE
+        }
     }
 
-    override fun getItemCount(): Int {
-        return hourlyForecastList.size
+    override fun getItemCount(): Int = hourlyList.size
+
+    private fun filterNext8Hours(forecastList: List<ForecastItem>): List<ForecastItem> {
+        val currentTime = System.currentTimeMillis()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+
+        return forecastList.filter {
+            val forecastTime = dateFormat.parse(it.dateTime)?.time ?: 0
+            forecastTime > currentTime
+        }.take(8)
     }
 }

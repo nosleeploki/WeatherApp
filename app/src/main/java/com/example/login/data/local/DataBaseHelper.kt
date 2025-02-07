@@ -69,13 +69,11 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     // Thêm địa điểm yêu thích
-    fun addFavoriteLocation(userId: Int, locationName: String, latitude: Double, longitude: Double): Boolean {
+    fun addFavoriteLocation(userId: Int, locationName: String,): Boolean {
         val db = writableDatabase
         val values = ContentValues().apply {
             put("user_id", userId)
             put("location_name", locationName)
-            put("latitude", latitude)
-            put("longitude", longitude)
         }
         val result = db.insert("user_favorites", null, values)
         return result != -1L
@@ -86,7 +84,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val db = readableDatabase
         val cursor = db.query(
             "user_favorites",
-            arrayOf("id", "location_name", "latitude", "longitude"),
+            arrayOf("id", "location_name"),
             "user_id=?",
             arrayOf(userId.toString()),
             null,
@@ -98,9 +96,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         while (cursor.moveToNext()) {
             val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
             val locationName = cursor.getString(cursor.getColumnIndexOrThrow("location_name"))
-            val latitude = cursor.getDouble(cursor.getColumnIndexOrThrow("latitude"))
-            val longitude = cursor.getDouble(cursor.getColumnIndexOrThrow("longitude"))
-            favorites.add(FavoriteLocation(id, locationName, latitude, longitude))
+            favorites.add(FavoriteLocation(id, locationName))
         }
         cursor.close()
         db.close()
@@ -122,8 +118,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     data class FavoriteLocation(
         val id: Int,
         val locationName: String,
-        val latitude: Double,
-        val longitude: Double
     )
 
 

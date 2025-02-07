@@ -71,3 +71,4 @@ fun loadImage(view: ImageView, url: String?) {
             .into(view)
     }
 }
+

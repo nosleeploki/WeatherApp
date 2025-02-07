@@ -1,44 +1,73 @@
-package com.example.login.presentation.ui.weather
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.login.R
+import com.example.login.databinding.WaItemDailyBinding
 import com.example.login.data.model.ForecastItem
-import java.text.SimpleDateFormat
-import java.util.Locale
+import kotlin.collections.LinkedHashMap
 
-class DailyForecastAdapter(private val dailyForecastList: List<ForecastItem>) :
+class DailyForecastAdapter(forecastList: List<ForecastItem>) :
     RecyclerView.Adapter<DailyForecastAdapter.DailyForecastViewHolder>() {
 
-    inner class DailyForecastViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvDate: TextView = itemView.findViewById(R.id.tvDate)
-        val ivDailyWeatherIcon: ImageView = itemView.findViewById(R.id.ivDailyWeatherIcon)
-        val tvDailyTemp: TextView = itemView.findViewById(R.id.tvDailyTemp)
+    private val dailyAverages: List<ForecastItem>
+
+    init {
+        dailyAverages = calculateDailyAverages(forecastList)
     }
 
+    inner class DailyForecastViewHolder(val binding: WaItemDailyBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DailyForecastViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.wa_item_daily, parent, false)
-        return DailyForecastViewHolder(view)
+        val binding: WaItemDailyBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            R.layout.wa_item_daily,
+            parent,
+            false
+        )
+        return DailyForecastViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: DailyForecastViewHolder, position: Int) {
-        val item = dailyForecastList[position]
-
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val date = dateFormat.parse(item.dateTime.split(" ")[0])
-        val formattedDate = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date)
-        holder.tvDate.text = formattedDate
-        holder.tvDailyTemp.text = "${(item.main.temperature).toInt()}°C"
-        val iconUrl = "https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png"
-        Glide.with(holder.itemView.context).load(iconUrl).into(holder.ivDailyWeatherIcon)
+        holder.binding.dailyWeather = dailyAverages[position]
+        holder.binding.executePendingBindings()
+        if (position == dailyAverages.size + 1) {
+            holder.binding.separatorView.visibility = View.GONE
+        } else {
+            holder.binding.separatorView.visibility = View.VISIBLE
+        }
     }
 
-    override fun getItemCount(): Int {
-        return dailyForecastList.size
+    override fun getItemCount(): Int = dailyAverages.size
+
+    private fun calculateDailyAverages(forecastList: List<ForecastItem>): List<ForecastItem> {
+        val groupedData = LinkedHashMap<String, MutableList<ForecastItem>>()
+
+        for (forecast in forecastList) {
+            val date = forecast.dateTime.split(" ")[0]
+            if (!groupedData.containsKey(date)) {
+                groupedData[date] = mutableListOf()
+            }
+            groupedData[date]?.add(forecast)
+        }
+
+        val averagedList = mutableListOf<ForecastItem>()
+        for ((date, forecasts) in groupedData) {
+            val avgTemp = forecasts.map { it.main.temperature }.average()
+            val mainWeather = forecasts[0].main.copy(temperature = avgTemp)
+            val icon = forecasts[0].weather[0].icon // Dùng icon đầu tiên
+
+            averagedList.add(
+                ForecastItem(
+                    dateTime = date,
+                    main = mainWeather,
+                    weather = listOf(forecasts[0].weather[0].copy(icon = icon))
+                )
+            )
+        }
+
+        return averagedList.take(5)
     }
 }
