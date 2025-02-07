@@ -3,11 +3,14 @@ package com.example.login.presentation.ui.binding
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.bumptech.glide.Glide
 
 @BindingAdapter("android:text")
 fun bindEditText(editText: EditText, text: LiveData<String>?){
@@ -44,4 +47,27 @@ fun setPhoneNumberListener(editText: EditText,listener:InverseBindingListener?){
 fun getPhoneNumber(editText: EditText): Int? {
     val text = editText.text.toString()
     return text.toIntOrNull()
+}
+
+@BindingAdapter("formattedTemperature")
+fun bindFormattedTemperature(textView: TextView, temperature: Double?) {
+    temperature?.let {
+        textView.text = "${it}°C"
+    }
+}
+
+@BindingAdapter("formattedHumidity")
+fun bindFormattedHumidity(textView: TextView, humidity: Int?) {
+    humidity?.let {
+        textView.text = "Humidity: $it%"
+    }
+}
+
+@BindingAdapter("imageUrl")
+fun loadImage(view: ImageView, url: String?) {
+    url?.let {
+        Glide.with(view.context)
+            .load(it)
+            .into(view)
+    }
 }

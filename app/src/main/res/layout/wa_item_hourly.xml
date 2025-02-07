@@ -1,0 +1,44 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="hourlyWeather"
+            type="com.example.login.data.model.ForecastItem" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="8dp">
+
+        <!-- Hiển thị thời gian -->
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{hourlyWeather.dateTime.substring(0,10)}"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:gravity="center" />
+
+        <!-- Icon thời tiết -->
+        <ImageView
+            android:id="@+id/ivWeatherIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/icon"
+            app:imageUrl='@{"https://openweathermap.org/img/wn/" + hourlyWeather.weather.get(0).icon + "@2x.png"}' />
+
+        <!-- Hiển thị nhiệt độ -->
+        <TextView
+            android:id="@+id/tvTemp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text='@{String.format("%.1f°C", hourlyWeather.main.temperature)}'
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:gravity="center" />
+    </LinearLayout>
+</layout>
