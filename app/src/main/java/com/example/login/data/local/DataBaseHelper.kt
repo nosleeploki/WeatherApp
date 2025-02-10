@@ -52,8 +52,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        // Nếu phiên bản >= 2, thêm bảng yêu thích
-        if (oldVersion < 3) {
+        if (oldVersion < 2) {
             val createFavoritesTableQuery = """
             CREATE TABLE user_favorites (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -69,14 +68,36 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     // Thêm địa điểm yêu thích
-    fun addFavoriteLocation(userId: Int, locationName: String,): Boolean {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put("user_id", userId)
-            put("location_name", locationName)
+    fun addFavoriteLocation(userId: Int, locationName: String): Boolean {
+        return if (isFavoriteLocationExists(userId, locationName)) {
+            // Nếu địa điểm đã tồn tại, xóa
+            removeFavoriteLocation(userId, locationName)
+        } else {
+            // Nếu địa điểm chưa tồn tại, thêm
+            val db = writableDatabase
+            val values = ContentValues().apply {
+                put("user_id", userId)
+                put("location_name", locationName)
+            }
+            val result = db.insert("user_favorites", null, values)
+            result != -1L
         }
-        val result = db.insert("user_favorites", null, values)
-        return result != -1L
+    }
+
+    fun isFavoriteLocationExists(userId: Int, locationName: String): Boolean {
+        val db = readableDatabase
+        val cursor = db.query(
+            "user_favorites",
+            arrayOf("id"),
+            "user_id=? AND location_name=?",
+            arrayOf(userId.toString(), locationName),
+            null,
+            null,
+            null
+        )
+        val exists = cursor.count > 0
+        cursor.close()
+        return exists
     }
 
     // Lấy danh sách địa điểm yêu thích của người dùng
@@ -99,7 +120,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             favorites.add(FavoriteLocation(id, locationName))
         }
         cursor.close()
-        db.close()
         return favorites
     }
 

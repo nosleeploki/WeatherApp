@@ -21,10 +21,15 @@ import java.security.SecureRandom
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import android.Manifest
+import android.content.Intent
+import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
+import android.widget.PopupMenu
 import androidx.lifecycle.ViewModelProvider
 import com.example.login.data.repository.WeatherRepository
 import com.example.login.presentation.di.WeatherViewModelFactory
+import com.example.login.presentation.ui.login.LoginActivity
 
 class WeatherActivity : AppCompatActivity() {
 
@@ -34,6 +39,15 @@ class WeatherActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableTLS()
+
+        val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val userId = sharedPreferences.getInt("user_id", -1)
+
+        if (userId == -1) {
+            Toast.makeText(this, "User not found, please login again", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
 
         binding = DataBindingUtil.setContentView(this, R.layout.wa_weather_activity)
         binding.lifecycleOwner = this
@@ -60,35 +74,41 @@ class WeatherActivity : AppCompatActivity() {
             }
         })
 
-
         viewModel.currentWeather.observe(this, Observer { currentWeather ->
-            binding.tvCity.text = currentWeather.cityName
-            binding.tvTemperature.text = "${currentWeather.main.temperature}°C"
-            binding.tvHumidity.text = "Humidity: ${currentWeather.main.humidity}%"
-            binding.tvWeatherDescription.text = currentWeather.weather[0].description
+            currentWeather?.let {
+                binding.tvCity.text = it.cityName
+                binding.tvTemperature.text = "${it.main.temperature}°C"
+                binding.tvHumidity.text = "Humidity: ${it.main.humidity}%"
+                binding.tvWeatherDescription.text = it.weather[0].description
 
-            val iconUrl = "http://openweathermap.org/img/wn/${currentWeather.weather[0].icon}@2x.png"
-            Log.d("IconUrl", iconUrl) // Log the URL to verify it
-            Glide.with(this)
-                .load(iconUrl)
-                .into(binding.weatherIcon)
+                val iconUrl = "http://openweathermap.org/img/wn/${it.weather[0].icon}@2x.png"
+                Log.d("IconUrl", iconUrl)
+                Glide.with(this)
+                    .load(iconUrl)
+                    .into(binding.weatherIcon)
+                viewModel.updateFavoriteIcon(userId, it.cityName, binding.ivFavorite)
+            }
         })
 
         viewModel.weatherForecast.observe(this, Observer { weatherForecast ->
-            val hourlyAdapter = HourlyForecastAdapter(weatherForecast.forecastList)
-            binding.rvHourlyForecast.adapter = hourlyAdapter
+            weatherForecast?.let {
+                val hourlyAdapter = HourlyForecastAdapter(it.forecastList)
+                binding.rvHourlyForecast.adapter = hourlyAdapter
 
-            val dailyAdapter = DailyForecastAdapter(weatherForecast.forecastList)
-            binding.rvDailyForecast.adapter = dailyAdapter
+                val dailyAdapter = DailyForecastAdapter(it.forecastList)
+                binding.rvDailyForecast.adapter = dailyAdapter
+            }
         })
 
         viewModel.errorMessage.observe(this, Observer { errorMessage ->
-            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+            errorMessage?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            }
         })
 
-        binding.etSearchLocation.setOnClickListener{
-            val  cityName = binding.etSearchLocation.text.toString()
-            if (cityName.isNotEmpty()){
+        binding.etSearchLocation.setOnClickListener {
+            val cityName = binding.etSearchLocation.text.toString()
+            if (cityName.isNotEmpty()) {
                 viewModel.fetchWeatherData(cityName, API_KEY)
             } else {
                 binding.etSearchLocation.error = "Rewrite your city name!"
@@ -97,6 +117,53 @@ class WeatherActivity : AppCompatActivity() {
 
         binding.icRecent.setOnClickListener {
             viewModel.fetchCurrentLocationWeather(API_KEY, this)
+        }
+
+        binding.ivFavorite.setOnClickListener {
+            val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+            val userId = sharedPreferences.getInt("user_id", -1)
+            val currentCity = binding.tvCity.text.toString()
+
+            if (currentCity.isNotEmpty()) {
+                viewModel.toggleFavoriteLocation(userId, currentCity, binding.ivFavorite)
+                viewModel.updateFavoriteIcon(userId, currentCity, binding.ivFavorite)
+            } else {
+                Toast.makeText(this, "No location data available", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        binding.ivMenu.setOnClickListener { view ->
+            viewModel.loadFavoriteLocations(userId)
+            Log.d("PopupMenu", "Favorite locations: ${viewModel.favoriteLocations.value}")
+            val popupMenu = PopupMenu(this, view)
+            popupMenu.menu.clear()
+            popupMenu.menu.add(0, 0, 0, "Your favorite location").isEnabled = false
+
+            viewModel.favoriteLocations.observe(this, Observer { locations ->
+                Log.d("FavoriteLocations", "Locations: ${locations?.size}")
+                locations?.forEachIndexed { index, location ->
+                    popupMenu.menu.add(0, location.id, index, location.locationName)
+                    Log.d("FavoriteLocations", "Location: ${location.locationName}")
+                }
+            })
+
+            val SIGNOUT_MENU_ID = 9999
+            popupMenu.menu.add(0, SIGNOUT_MENU_ID, viewModel.favoriteLocations.value?.size ?: 0 + 1, "Signout")
+
+            popupMenu.setOnMenuItemClickListener { item ->
+                val selectedLocation = viewModel.favoriteLocations.value?.getOrNull(item.itemId)
+                if (selectedLocation != null) {
+                    viewModel.fetchWeatherData(selectedLocation.locationName, API_KEY)
+                    Toast.makeText(this, "Hiển thị thời tiết cho: ${selectedLocation.locationName}", Toast.LENGTH_SHORT).show()
+                } else if (item.itemId == SIGNOUT_MENU_ID) {
+                    getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().remove("user_id").apply()
+                    Toast.makeText(this, "Sign out Success", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, LoginActivity::class.java))
+                    finish()
+                }
+                true
+            }
+            popupMenu.show()
         }
     }
 
@@ -111,5 +178,4 @@ class WeatherActivity : AppCompatActivity() {
             }
         }
     }
-
 }

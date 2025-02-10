@@ -21,4 +21,8 @@ class UserRepository(private val dbHelper: DatabaseHelper) {
     fun isValid(username: String, phone: String): Boolean{
         return dbHelper.isValid(username, phone)
     }
+
+    fun getFavoriteLocations(userId: Int): List<DatabaseHelper.FavoriteLocation> {
+        return dbHelper.getFavoriteLocations(userId)
+    }
 }

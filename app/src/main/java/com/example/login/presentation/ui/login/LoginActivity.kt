@@ -12,12 +12,13 @@ import com.example.login.data.repository.UserRepository
 import com.example.login.databinding.WaLoginActivityBinding
 import com.example.login.presentation.di.ViewModelFactory
 import com.example.login.presentation.ui.register.RegisterActivity
+import com.example.login.presentation.ui.weather.WeatherActivity
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var viewModel: LoginViewModel
     private lateinit var binding: WaLoginActivityBinding
 
-    override fun onCreate(savedInstanceState: Bundle?){
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.wa_login_activity)
@@ -31,19 +32,28 @@ class LoginActivity : AppCompatActivity() {
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
+        binding.loginButton.setOnClickListener {
+            viewModel.onLoginClicked(this)
+        }
 
-        viewModel.errorMessage.observe(this){
-            errorMessage -> errorMessage?.let{
+        viewModel.errorMessage.observe(this) { errorMessage ->
+            errorMessage?.let {
                 Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-            viewModel.errorMessage.value = null
-        }
+                viewModel.errorMessage.value = null // Reset error message
+            }
         }
 
-        viewModel.loginStatus.observe(this){
-            success ->
-                if(success){
-                    Toast.makeText(this,"Login success!", Toast.LENGTH_SHORT).show()
-                }
+        viewModel.loginStatus.observe(this) { success ->
+            if (success == true) {
+                Toast.makeText(this, "Login success!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewModel.navigateToWeatherEvent.observe(this) { navigate ->
+            if (navigate == true) {
+                startActivity(Intent(this, WeatherActivity::class.java))
+                viewModel.navigateToWeatherEvent.value = false
+            }
         }
 
         viewModel.navigateToRegisterEvent.observe(this) { navigate ->
@@ -52,7 +62,5 @@ class LoginActivity : AppCompatActivity() {
                 viewModel.navigateToRegisterEvent.value = false // Reset sự kiện
             }
         }
-
-
     }
 }

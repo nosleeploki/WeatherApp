@@ -58,23 +58,7 @@ data class ForecastItem(
     val main: MainForecast,
     @SerializedName("weather")
     val weather: List<Weather>
-) : BaseObservable() {
-    @get:Bindable
-    val formattedDate: String
-        get() {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val date = dateFormat.parse(dateTime.split(" ")[0])
-            return SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date)
-        }
-
-    @get:Bindable
-    val weatherIconUrl: String
-        get() = "https://openweathermap.org/img/wn/${weather[0].icon}@2x.png"
-
-    @get:Bindable
-    val temperatureText: String
-        get() = "${main.temperature.toInt()}°C"
-}
+)
 
 data class MainForecast(
     @SerializedName("temp")

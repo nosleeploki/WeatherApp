@@ -12,4 +12,5 @@ class WeatherRepository {
     suspend fun getWeatherForecast(lat: Double, lon: Double, apiKey: String): WeatherForecastResponse {
         return RetrofitInstance.instance.getWeatherForecast(lat, lon, apiKey)
     }
+
 }

@@ -4,12 +4,15 @@ import android.Manifest
 import android.app.Application
 import android.content.pm.PackageManager
 import android.location.Location
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.login.R
+import com.example.login.data.local.DatabaseHelper
 import com.example.login.data.model.CurrentWeatherResponse
 import com.example.login.data.model.WeatherForecastResponse
 import com.example.login.data.repository.WeatherRepository
@@ -33,6 +36,12 @@ class WeatherViewModel(application: Application, weatherRepository: WeatherRepos
     val isLoading: LiveData<Boolean> get() = _isLoading
 
     private val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(application)
+
+    private val dbHelper = DatabaseHelper(application)
+    val favoriteLocations = MutableLiveData<List<DatabaseHelper.FavoriteLocation>>()
+
+    private val _userLoggedOut = MutableLiveData<Boolean>()
+    val userLoggedOut: LiveData<Boolean> get() = _userLoggedOut
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
@@ -93,6 +102,38 @@ class WeatherViewModel(application: Application, weatherRepository: WeatherRepos
                 _errorMessage.postValue("Loi khi lay data weather: ${e.message}")
             } finally {
                 _isLoading.postValue(false)
+            }
+        }
+    }
+
+    fun loadFavoriteLocations(userId: Int) {
+        viewModelScope.launch {
+            try {
+                val locations = dbHelper.getFavoriteLocations(userId)
+                favoriteLocations.value = locations
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to load favorite locations"
+            }
+        }
+    }
+
+
+    fun toggleFavoriteLocation(userId: Int, locationName: String, imageView: ImageView) {
+        viewModelScope.launch {
+            if (dbHelper.isFavoriteLocationExists(userId, locationName)) {
+                dbHelper.removeFavoriteLocation(userId, locationName)
+            } else {
+                dbHelper.addFavoriteLocation(userId, locationName)
+            }
+        }
+    }
+
+    fun updateFavoriteIcon(userId: Int, locationName: String, imageView: ImageView) {
+        viewModelScope.launch {
+            if (dbHelper.isFavoriteLocationExists(userId, locationName)) {
+                imageView.setImageResource(R.drawable.star2)
+            } else {
+                imageView.setImageResource(R.drawable.star)
             }
         }
     }

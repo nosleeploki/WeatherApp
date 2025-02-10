@@ -2,6 +2,7 @@ package com.example.login.presentation.ui.binding
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,6 +12,7 @@ import androidx.databinding.InverseBindingListener
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
+import com.example.login.presentation.ui.login.LoginViewModel
 
 @BindingAdapter("android:text")
 fun bindEditText(editText: EditText, text: LiveData<String>?){
@@ -72,3 +74,9 @@ fun loadImage(view: ImageView, url: String?) {
     }
 }
 
+@BindingAdapter("onLoginClicked")
+fun setOnLoginClickListener(button: Button, viewModel: LoginViewModel) {
+    button.setOnClickListener {
+        viewModel.onLoginClicked(button.context)
+    }
+}

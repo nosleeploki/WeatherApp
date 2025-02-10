@@ -33,7 +33,7 @@ class DailyForecastAdapter(forecastList: List<ForecastItem>) :
     override fun onBindViewHolder(holder: DailyForecastViewHolder, position: Int) {
         holder.binding.dailyWeather = dailyAverages[position]
         holder.binding.executePendingBindings()
-        if (position == dailyAverages.size + 1) {
+        if (position == 0) {
             holder.binding.separatorView.visibility = View.GONE
         } else {
             holder.binding.separatorView.visibility = View.VISIBLE
